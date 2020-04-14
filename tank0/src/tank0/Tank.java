@@ -22,9 +22,14 @@ public class Tank {
 	private boolean living = true;
 	/*private*/ Group group = Group.BAD;
 	
+	
 	//开火策略作为成员变量；
 	//也可以作为开火方法的参数，需要将DefaultFireStreategy设计成单例
-	FireStrategy fs = new DefaultFireStrategy();
+	//FireStrategy fs = new DefaultFireStrategy();
+	
+	//四向开火策略，，敌人坦克开火也会改变。后面需要修改敌人的开发策略
+	FireStrategy fs = new FourDirFireStrategy();
+	
 	
 	/*private*/ TankFrame tf = null;
 	
@@ -40,6 +45,25 @@ public class Tank {
 		rect.y = this.y;
 		rect.width = WIDTH;
 		rect.height = HEIGHT;
+		
+		//判断敌我坦克的开火策略
+//		if(group == Group.GOOD) fs = new FourDirFireStrategy();
+//		else fs = new DefaultFireStrategy();
+		
+		//通过配置文件实施判断
+		if(group == Group.GOOD) { 
+			String goodFSName =(String)PropertyMgr.get("goodFS");
+			
+			try {
+				fs = (FireStrategy)Class.forName(goodFSName).newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+//			fs = new FourDirFireStrategy();
+			}
+		else {
+			fs = new DefaultFireStrategy();	
+		}
 	}
 	
 	
